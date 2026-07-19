@@ -4,11 +4,15 @@ import { FlowableService } from '../flowable/flowable.service';
 import { createInvestmentDto } from './Dto/create.investment';
 import { InvestmentRepository } from './investment.repository';
 import { JwtUser } from '../../../../libs/auth/src/lib/interfaces/jwt-user.interface';
+import { RabbitMQService } from '@org/message-broker';
+
+import { CompleteTaskDto } from './Dto/complete-task.dto';
 @Injectable()
 export class InvestmentService {
   constructor(
     private readonly flowableService: FlowableService,
     private readonly investmentRepository: InvestmentRepository,
+    private readonly rabbitMQService: RabbitMQService,
   ) {}
 
   async createInvestment(dto: createInvestmentDto, User: JwtUser) {
@@ -85,10 +89,8 @@ export class InvestmentService {
       }),
     );
   }
-  
-  
 
-  async completeTask(taskId: string, variables: any) {
+  async completeTask(taskId: string, variables: CompleteTaskDto) {
     const task = await this.flowableService.getTask(taskId);
 
     await this.flowableService.completeTask(taskId, [
@@ -112,6 +114,17 @@ export class InvestmentService {
     const newStatus = approvalStatus === 'APPROVED' ? 'APPROVED' : 'REJECTED';
 
     await this.investmentRepository.updateStatus(investment.id, newStatus);
+
+    if (newStatus === 'APPROVED') {
+      await this.rabbitMQService.publishInvestmentApproved({
+        investmentId: investment.id,
+        investorId: investment.investorId,
+        companyName: investment.companyName,
+        investmentAmount: investment.investmentAmount,
+        approvalStatus: 'APPROVED',
+        approvedAt: new Date().toISOString(),
+      });
+    }
 
     return {
       investmentId: investment.id,

@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { FlowableModule } from './flowable/flowable.module';
 import { InvestmentModule } from './investment/investment.module';
 import { AuthModule } from '@org/auth';
+import { MessageBrokerModule } from '@org/message-broker';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from '@org/auth';
     FlowableModule,
     InvestmentModule,
     AuthModule,
+    MessageBrokerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

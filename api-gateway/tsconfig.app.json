@@ -24,6 +24,9 @@
   ],
   "references": [
     {
+      "path": "../libs/message-broker/tsconfig.lib.json"
+    },
+    {
       "path": "../libs/auth/tsconfig.lib.json"
     },
     {
