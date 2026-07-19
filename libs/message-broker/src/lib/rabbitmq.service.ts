@@ -4,21 +4,19 @@ import {
   ClientProxyFactory,
   Transport,
 } from '@nestjs/microservices';
-import { InvestmentApprovedEvent } from './events';
+import { InvestmentApprovedEvent, InvestmentRejectedEvent } from './events';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit {
-  private client!: ClientProxy;
+  private investmentClient!: ClientProxy;
+  private auditClient!: ClientProxy;
 
   onModuleInit() {
-    this.client = ClientProxyFactory.create({
+    this.investmentClient = ClientProxyFactory.create({
       transport: Transport.RMQ,
-
       options: {
         urls: ['amqp://admin:admin@localhost:5672'],
-
         queue: 'investment_events',
-
         queueOptions: {
           durable: true,
           arguments: {
@@ -28,9 +26,29 @@ export class RabbitMQService implements OnModuleInit {
         },
       },
     });
+
+    this.auditClient = ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://admin:admin@localhost:5672'],
+        queue: 'audit_events',
+        queueOptions: {
+          durable: true,
+        },
+      },
+    });
   }
 
   publishInvestmentApproved(payload: InvestmentApprovedEvent) {
-    return this.client.emit('INVESTMENT_APPROVED', payload);
+    console.log('PUBLISH APPROVED EVENT', payload.investmentId);
+
+    this.investmentClient.emit('INVESTMENT_APPROVED', payload);
+
+    this.auditClient.emit('INVESTMENT_APPROVED', payload);
+  }
+  publishInvestmentRejected(payload: InvestmentRejectedEvent) {
+    this.investmentClient.emit('INVESTMENT_REJECTED', payload);
+
+    this.auditClient.emit('INVESTMENT_REJECTED', payload);
   }
 }

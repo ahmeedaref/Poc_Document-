@@ -8,7 +8,7 @@ import { FlowableModule } from './flowable/flowable.module';
 import { InvestmentModule } from './investment/investment.module';
 import { AuthModule } from '@org/auth';
 import { MessageBrokerModule } from '@org/message-broker';
-
+import { AuditModule } from '@org/audit';
 @Module({
   imports: [
     AppConfigModule,
@@ -18,6 +18,7 @@ import { MessageBrokerModule } from '@org/message-broker';
     InvestmentModule,
     AuthModule,
     MessageBrokerModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [AppService],

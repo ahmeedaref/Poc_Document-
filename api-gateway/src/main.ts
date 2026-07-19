@@ -9,7 +9,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://admin:admin@localhost:5672'],
-      queue: 'investment_events',
+      queue: 'investment_events_unused',
       noAck: false,
 
       queueOptions: {
@@ -18,6 +18,21 @@ async function bootstrap() {
           'x-dead-letter-exchange': 'investment_retry_exchange',
           'x-dead-letter-routing-key': 'investment_retry',
         },
+      },
+
+      prefetchCount: 1,
+    },
+  });
+
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://admin:admin@localhost:5672'],
+      queue: 'audit_events',
+      noAck: false,
+
+      queueOptions: {
+        durable: true,
       },
 
       prefetchCount: 1,

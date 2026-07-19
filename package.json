@@ -49,7 +49,8 @@
     "api-gateway",
     "libs",
     "rules",
-    "auth"
+    "auth",
+    "audit"
   ],
   "dependencies": {
     "@gorules/zen-engine": "^0.54.0",

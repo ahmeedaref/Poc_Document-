@@ -126,6 +126,17 @@ export class InvestmentService {
       });
     }
 
+    if (newStatus === 'REJECTED') {
+      await this.rabbitMQService.publishInvestmentRejected({
+        investmentId: investment.id,
+        investorId: investment.investorId,
+        companyName: investment.companyName,
+        investmentAmount: investment.investmentAmount,
+        approvalStatus: 'REJECTED',
+        rejectedAt: new Date().toISOString(),
+      });
+    }
+
     return {
       investmentId: investment.id,
       approvalStatus,
