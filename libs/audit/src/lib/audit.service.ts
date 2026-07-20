@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@org/database';
-import { Prisma } from '@prisma/client';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { AuditLog } from './schemas/audit-log.schema';
 
 @Injectable()
 export class AuditService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectModel(AuditLog.name)
+    private readonly auditModel: Model<AuditLog>,
+  ) {}
 
-  async create(
-    event: string,
-    entityId: string,
-    payload: Prisma.InputJsonValue,
-  ) {
-    return this.prisma.auditLog.create({
-      data: {
-        event,
-        entityId,
-        payload,
-      },
+  async create(event: string, entityId: string, payload: Record<string, any>) {
+    return this.auditModel.create({
+      eventType: event,
+      investmentId: entityId,
+      payload,
     });
   }
 }
