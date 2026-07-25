@@ -1,0 +1,440 @@
+{
+  "info": {
+    "_postman_id": "5d88feac-291a-43cb-a4e5-4ad7de1fe0d3",
+    "name": "poc_document",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "37775038"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "create user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"mohamoud ahmed\",\r\n    \"email\":\"mohamoud@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "flowable",
+      "item": [
+        {
+          "name": "start process",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"investorId\": \"INV001\",\r\n  \"companyName\": \"ABC Company\",\r\n  \"investmentAmount\": 500000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/flowable/start",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "flowable",
+                "start"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get process",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/flowable/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "flowable",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "claim task",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/flowable/tasks/daea10c5-80b3-11f1-913c-82d98b0d715e/claim",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "flowable",
+                "tasks",
+                "daea10c5-80b3-11f1-913c-82d98b0d715e",
+                "claim"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "complete task",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/flowable/tasks/daea10c5-80b3-11f1-913c-82d98b0d715e/complete",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "flowable",
+                "tasks",
+                "daea10c5-80b3-11f1-913c-82d98b0d715e",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "investment",
+      "item": [
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "create investment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0leh}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"companyName\": \" hish risk p  Company poc\",\r\n  \"investmentAmount\":700000,\r\n  \"nationalId\": \"123456\",\r\n  \"companyId\": \"COMP001\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/investments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "investments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0leh}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/investments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "investments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "claim",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "test",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "admin ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/api/investments/tasks/d9554e24-8171-11f1-9a35-caf9132caacc/claim",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "investments",
+                "tasks",
+                "d9554e24-8171-11f1-9a35-caf9132caacc",
+                "claim"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "complete task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0leh}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n \"approvalStatus\":\"REJECTED\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/investments/tasks/5c2c6d64-8881-11f1-a875-fa0334255aba/complete",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "investments",
+                "tasks",
+                "5c2c6d64-8881-11f1-a875-fa0334255aba",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "keycloak",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "client_id",
+              "value": "api-gateway",
+              "type": "text",
+              "uuid": "47127574-f65d-4f13-b8db-5ddbe9169aba"
+            },
+            {
+              "key": "client_secret",
+              "value": "wd4D2T7pcAqMfHxoXDDzZ59RdhrEp3r1",
+              "type": "text",
+              "uuid": "9f105fe9-e3e3-45aa-9cf5-3303dc0ea5f1"
+            },
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text",
+              "uuid": "4df5e1fe-5ccc-4c19-bc81-35a4f7af79ac"
+            },
+            {
+              "key": "username",
+              "value": "testUser2",
+              "type": "text",
+              "uuid": "437079b7-5aa0-4c38-a2d0-5b00f84757a5"
+            },
+            {
+              "key": "password",
+              "value": "test123",
+              "type": "text",
+              "uuid": "42268adc-a385-44b2-af72-148bcaf5e61d"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8081/realms/enterprise-backend/protocol/openid-connect/token",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "realms",
+            "enterprise-backend",
+            "protocol",
+            "openid-connect",
+            "token"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "supabase_service_role_api_key_0osd",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0j41",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0sg5",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_1439",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0fg9",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0leh",
+      "secret": true
+    }
+  ]
+}

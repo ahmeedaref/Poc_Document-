@@ -4,9 +4,14 @@ import { InvestmentService } from './investment.service';
 import { FlowableModule } from '../flowable/flowable.module';
 import { InvestmentRepository } from './investment.repository';
 import { UsersModule } from '../users/users.module';
-import { MessageBrokerModule } from '@org/message-broker';
+import { ExternalIntegrationModule } from '@org/external-integration';
+
 @Module({
-  imports: [FlowableModule, UsersModule, MessageBrokerModule],
+  imports: [
+    FlowableModule,
+    UsersModule,
+    ExternalIntegrationModule,
+  ],
   controllers: [InvestmentController],
   providers: [InvestmentService, InvestmentRepository],
 })

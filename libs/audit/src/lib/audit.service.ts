@@ -10,7 +10,7 @@ export class AuditService {
     private readonly auditModel: Model<AuditLog>,
   ) {}
 
-  async create(event: string, entityId: string, payload: Record<string, any>) {
+  async create(event: string, entityId: string, payload: Record<string, unknown >) {
     return this.auditModel.create({
       eventType: event,
       investmentId: entityId,

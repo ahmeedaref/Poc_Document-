@@ -25,7 +25,7 @@ export class FlowableService {
     )!;
   }
 
-  async startProcess(dto: createInvestmentDto) {
+  async startProcess(dto: createInvestmentDto, investorId: string) {
     const url = `${this.flowableUrl}/runtime/process-instances`;
 
     const body = {
@@ -34,18 +34,31 @@ export class FlowableService {
       variables: [
         {
           name: 'investorId',
-          value: dto.investorId,
+          value: investorId,
           type: 'string',
         },
+
         {
           name: 'companyName',
           value: dto.companyName,
           type: 'string',
         },
+
         {
           name: 'investmentAmount',
           value: dto.investmentAmount,
-          type: 'integer',
+          type: 'long',
+        },
+        {
+          name: 'approvalGroups',
+          value: [
+            'finance-team',
+            'risk-team',
+            'legal-team',
+            'compliance-team',
+            'executive-team',
+          ],
+          type: 'json',
         },
       ],
     };
@@ -67,6 +80,7 @@ export class FlowableService {
           params: {
             processInstanceId,
           },
+
           auth: {
             username: this.username,
             password: this.password,
@@ -124,9 +138,36 @@ export class FlowableService {
 
       return response.data;
     } catch (error: any) {
-      console.log('FLOWABLE ERROR:', error.response?.data || error.message);
+      if (error.response?.status === 404) {
+        return {
+          ended: true,
+          completed: true,
+        };
+      }
 
       throw error;
+    }
+  }
+  async getProcessVariables(processInstanceId: string) {
+    try {
+      const response = await this.httpService.axiosRef.get(
+        `${this.flowableUrl}/runtime/process-instances/${processInstanceId}/variables`,
+        {
+          auth: {
+            username: this.username,
+            password: this.password,
+          },
+        },
+      );
+
+      return response.data.data;
+    } catch (error: any) {
+      console.log(
+        'FLOWABLE VARIABLES ERROR:',
+        error.response?.data || error.message,
+      );
+
+      return [];
     }
   }
 

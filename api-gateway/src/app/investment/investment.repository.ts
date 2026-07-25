@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { createInvestmentDto } from './Dto/create.investment';
 import { PrismaService } from '@org/database';
 @Injectable()
 export class InvestmentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: createInvestmentDto) {
+  create(data: {
+    investorId: string;
+    companyName: string;
+    investmentAmount: number;
+  }) {
     return this.prisma.investment.create({
       data,
     });

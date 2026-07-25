@@ -54,6 +54,7 @@
   ],
   "dependencies": {
     "@gorules/zen-engine": "^0.54.0",
+    "@keycloak/keycloak-admin-client": "^22.0.5",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.4",
@@ -63,6 +64,7 @@
     "@nestjs/mongoose": "^11.0.4",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/schedule": "^6.1.3",
     "@org/config": "^0.0.1",
     "@prisma/client": "^6.19.3",
     "amqp-connection-manager": "^5.0.0",

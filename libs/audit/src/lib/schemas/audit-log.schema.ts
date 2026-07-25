@@ -15,7 +15,7 @@ export class AuditLog {
   investmentId?: string;
 
   @Prop({ type: Object })
-  payload!: Record<string, any>;
+  payload!: Record<string, unknown>;
 }
 
 export const AuditLogSchema = SchemaFactory.createForClass(AuditLog);

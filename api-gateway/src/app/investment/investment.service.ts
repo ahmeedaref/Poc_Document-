@@ -4,15 +4,12 @@ import { FlowableService } from '../flowable/flowable.service';
 import { createInvestmentDto } from './Dto/create.investment';
 import { InvestmentRepository } from './investment.repository';
 import { JwtUser } from '../../../../libs/auth/src/lib/interfaces/jwt-user.interface';
-import { RabbitMQService } from '@org/message-broker';
-
 import { CompleteTaskDto } from './Dto/complete-task.dto';
 @Injectable()
 export class InvestmentService {
   constructor(
     private readonly flowableService: FlowableService,
     private readonly investmentRepository: InvestmentRepository,
-    private readonly rabbitMQService: RabbitMQService,
   ) {}
 
   async createInvestment(dto: createInvestmentDto, User: JwtUser) {
@@ -24,13 +21,14 @@ export class InvestmentService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     const investment = await this.investmentRepository.create({
       investorId: user.id,
       companyName: dto.companyName,
       investmentAmount: dto.investmentAmount,
     });
 
-    const process = await this.flowableService.startProcess(dto);
+    const process = await this.flowableService.startProcess(dto, user.id);
 
     const updatedInvestment =
       await this.investmentRepository.updateProcessInstance(
@@ -61,7 +59,11 @@ export class InvestmentService {
             investment.processInstanceId,
           );
 
-          if (process?.ended) {
+          if (!process) {
+            workflow = {
+              state: 'NOT_FOUND',
+            };
+          } else if (process.ended) {
             workflow = {
               state: 'COMPLETED',
             };
@@ -90,18 +92,68 @@ export class InvestmentService {
     );
   }
 
-  async completeTask(taskId: string, variables: CompleteTaskDto) {
+  async completeTask(taskId: string, dto: CompleteTaskDto) {
     const task = await this.flowableService.getTask(taskId);
 
-    await this.flowableService.completeTask(taskId, [
-      {
-        name: 'approvalStatus',
-        value: variables.approvalStatus,
-        type: 'string',
-      },
-    ]);
+    let flowableVariables: {
+      name: string;
+      value: string;
+      type: string;
+    }[] = [];
 
-    const approvalStatus = variables.approvalStatus;
+    if (task.taskDefinitionKey === 'reviewInvestment') {
+      if (!dto.approvalStatus) {
+        throw new Error('approvalStatus is required for review task');
+      }
+
+      flowableVariables = [
+        {
+          name: 'approvalStatus',
+          value: dto.approvalStatus,
+          type: 'string',
+        },
+      ];
+    }
+
+    if (task.taskDefinitionKey === 'approvalWorkflow') {
+      if (!dto.approvalStatus) {
+        throw new Error('approvalStatus is required for approval task');
+      }
+
+      flowableVariables = [
+        {
+          name: 'approvalStatus',
+          value: dto.approvalStatus,
+          type: 'string',
+        },
+      ];
+    }
+
+    await this.flowableService.completeTask(taskId, flowableVariables);
+
+    if (task.taskDefinitionKey !== 'approvalWorkflow') {
+      return {
+        message: 'Task completed',
+        task: task.name,
+      };
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const tasks = await this.flowableService.getProcessTasks(
+      task.processInstanceId,
+    );
+
+    const remainingApprovalTasks = tasks.filter(
+      (t: any) => t.taskDefinitionKey === 'approvalWorkflow',
+    );
+
+    if (remainingApprovalTasks.length > 0) {
+      return {
+        message: 'Approval recorded. Waiting for remaining approvals.',
+        remainingApprovals: remainingApprovalTasks.length,
+      };
+    }
 
     const investment = await this.investmentRepository.findByProcessInstanceId(
       task.processInstanceId,
@@ -111,37 +163,16 @@ export class InvestmentService {
       throw new Error('Investment not found');
     }
 
-    const newStatus = approvalStatus === 'APPROVED' ? 'APPROVED' : 'REJECTED';
+    const newStatus =
+      dto.approvalStatus === 'APPROVED' ? 'APPROVED' : 'REJECTED';
 
     await this.investmentRepository.updateStatus(investment.id, newStatus);
 
-    if (newStatus === 'APPROVED') {
-      await this.rabbitMQService.publishInvestmentApproved({
-        investmentId: investment.id,
-        investorId: investment.investorId,
-        companyName: investment.companyName,
-        investmentAmount: investment.investmentAmount,
-        approvalStatus: 'APPROVED',
-        approvedAt: new Date().toISOString(),
-      });
-    }
-
-    if (newStatus === 'REJECTED') {
-      await this.rabbitMQService.publishInvestmentRejected({
-        investmentId: investment.id,
-        investorId: investment.investorId,
-        companyName: investment.companyName,
-        investmentAmount: investment.investmentAmount,
-        approvalStatus: 'REJECTED',
-        rejectedAt: new Date().toISOString(),
-      });
-    }
-
     return {
       investmentId: investment.id,
-      approvalStatus,
+      approvalStatus: newStatus,
       investmentStatus: newStatus,
-      processState: 'COMPLETED',
+      processState: 'WAITING_FOR_FINALIZATION',
     };
   }
 }

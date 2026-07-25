@@ -23,6 +23,12 @@
     },
     {
       "path": "./libs/audit"
+    },
+    {
+      "path": "./libs/external-integration"
+    },
+    {
+      "path": "./libs/workflow"
     }
   ]
 }
