@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   ClientProxy,
   ClientProxyFactory,
@@ -11,11 +12,19 @@ export class RabbitMQService implements OnModuleInit {
   private investmentClient!: ClientProxy;
   private auditClient!: ClientProxy;
 
+  constructor(private readonly configService: ConfigService) {}
+
   onModuleInit() {
+    const rabbitmqUrl = this.configService.get<string>('RABBITMQ_URL');
+
+    if (!rabbitmqUrl) {
+      throw new Error('RABBITMQ_URL is not configured');
+    }
+
     this.investmentClient = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
-        urls: ['amqp://admin:admin@localhost:5672'],
+        urls: [rabbitmqUrl],
         queue: 'investment_events',
         queueOptions: {
           durable: true,
@@ -30,7 +39,7 @@ export class RabbitMQService implements OnModuleInit {
     this.auditClient = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
-        urls: ['amqp://admin:admin@localhost:5672'],
+        urls: [rabbitmqUrl],
         queue: 'audit_events',
         queueOptions: {
           durable: true,
@@ -46,6 +55,7 @@ export class RabbitMQService implements OnModuleInit {
 
     this.auditClient.emit('INVESTMENT_APPROVED', payload);
   }
+
   publishInvestmentRejected(payload: InvestmentRejectedEvent) {
     this.investmentClient.emit('INVESTMENT_REJECTED', payload);
 

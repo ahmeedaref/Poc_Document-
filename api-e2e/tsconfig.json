@@ -1,11 +1,14 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "out-tsc/@org/api-e2e",
+    "rootDir": ".",
+    "outDir": "./out-tsc",
     "esModuleInterop": true,
+    "allowJs": true,
     "noUnusedLocals": false,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["jest", "node"]
   },
-  "include": ["jest.config.ts", "src/**/*.ts"],
+  "include": ["src/**/*.ts", "jest.config.cts"],
   "references": []
 }
