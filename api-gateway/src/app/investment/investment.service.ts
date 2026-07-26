@@ -5,6 +5,12 @@ import { createInvestmentDto } from './Dto/create.investment';
 import { InvestmentRepository } from './investment.repository';
 import { JwtUser } from '@org/auth';
 import { CompleteTaskDto } from './Dto/complete-task.dto';
+interface FlowableTask {
+  id: string;
+  name: string;
+  taskDefinitionKey: string;
+  processInstanceId: string;
+}
 @Injectable()
 export class InvestmentService {
   constructor(
@@ -145,7 +151,7 @@ export class InvestmentService {
     );
 
     const remainingApprovalTasks = tasks.filter(
-      (t: any) => t.taskDefinitionKey === 'approvalWorkflow',
+      (t: FlowableTask) => t.taskDefinitionKey === 'approvalWorkflow',
     );
 
     if (remainingApprovalTasks.length > 0) {

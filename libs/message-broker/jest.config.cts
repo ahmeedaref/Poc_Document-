@@ -13,6 +13,7 @@ module.exports = {
   displayName: '@org/message-broker',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
+  passWithNoTests: true,
   transform: {
     '^.+\\.[tj]s$': ['@swc/jest', swcJestConfig],
   },
