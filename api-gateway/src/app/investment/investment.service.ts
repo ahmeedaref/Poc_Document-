@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FlowableService } from '../flowable/flowable.service';
 import { createInvestmentDto } from './Dto/create.investment';
 import { InvestmentRepository } from './investment.repository';
-import { JwtUser } from '../../../../libs/auth/src/lib/interfaces/jwt-user.interface';
+import { JwtUser } from '@org/auth';
 import { CompleteTaskDto } from './Dto/complete-task.dto';
 @Injectable()
 export class InvestmentService {
